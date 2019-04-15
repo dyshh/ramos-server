@@ -6,11 +6,21 @@ class DefaultController extends Controller {
     async sendMsg() {
         const { ctx, app } = this;
         const nsp = app.io.of('/');
-        const [ message ] = ctx.args;
-        // 向客户端广播消息， 在客户端监听broadcast事件就可以获取消息了
-        const { insertId } = await ctx.service.messages.create(message);
-        nsp.emit('broadcast', { message_id: insertId, message });
+        const [{ message, from_user_id, to_group_id }] = ctx.args;
+        // 先写进库
+        const { insertId } = await ctx.service.messages.create({
+            message,
+            from_user_id,
+            to_group_id,
+        });
+        nsp.emit('broadcast', {
+            id: insertId,
+            message,
+            from_user_id,
+            to_group_id,
+        });
     }
 }
 
 module.exports = DefaultController;
+
