@@ -1,6 +1,6 @@
 'use strict';
 module.exports = app => {
-    return class UserService extends app.Service {
+    return class ChatService extends app.Service {
         async getGroupListById({
             uid,
         }) {
