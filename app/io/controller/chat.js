@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class DefaultController extends Controller {
+class ChatController extends Controller {
     async sendMsg() {
         const { ctx, app } = this;
         const nsp = app.io.of('/');
@@ -22,5 +22,5 @@ class DefaultController extends Controller {
     }
 }
 
-module.exports = DefaultController;
+module.exports = ChatController;
 
