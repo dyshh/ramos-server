@@ -7,7 +7,8 @@ class MessageController extends Controller {
         const {
             group_id: groupId,
         } = this.ctx.params;
-        const messages = await this.service.messages.getHistoryList({ groupId });
+        const { page, size } = this.ctx.query;
+        const messages = await this.service.messages.getHistoryList({ groupId, page, size });
         const ret = await Promise.all(messages.map(async item => {
             const { from_user_id } = item;
             const { name } = await this.service.user.getUserInfoById(from_user_id);

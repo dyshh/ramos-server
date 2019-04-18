@@ -13,12 +13,16 @@ module.exports = app => {
         }
 
         async getHistoryList({
-            groupId,
+            groupId, page = 1, size = 10,
         }) {
+            const offset = size * (page - 1);
             const ret = await this.app.mysql.select('group_msg', {
                 where: {
                     to_group_id: groupId,
                 },
+                orders: [[ 'created_at', 'desc' ]],
+                limit: +size,
+                offset: +offset,
             });
             return ret;
         }
