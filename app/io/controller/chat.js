@@ -13,7 +13,7 @@ class ChatController extends Controller {
             from_user_id,
             to_group_id,
         });
-        nsp.emit('broadcast', {
+        nsp.emit('message', {
             id: insertId,
             message,
             from_user_id,

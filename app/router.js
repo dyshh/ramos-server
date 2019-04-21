@@ -6,6 +6,8 @@
 module.exports = app => {
     const { router, controller, io } = app;
     /** ----------------http------------------- */
+    // 登录
+    router.post('/login', controller.user.login);
     // 获取聊天列表
     router.get('/chat_list/:uid', controller.chat.getChatList);
     // 获取群组聊天记录

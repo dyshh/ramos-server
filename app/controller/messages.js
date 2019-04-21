@@ -11,7 +11,7 @@ class MessageController extends Controller {
         const messages = await this.service.messages.getHistoryList({ groupId, page, size });
         const ret = await Promise.all(messages.map(async item => {
             const { from_user_id } = item;
-            const { name } = await this.service.user.getUserInfoById(from_user_id);
+            const { name } = await this.service.user.findOne({ id: from_user_id });
             return {
                 ...item,
                 username: name,
