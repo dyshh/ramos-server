@@ -12,7 +12,7 @@ class ChatController extends Controller {
             const defaultGroup = await this.ctx.service.chat.getDefaultGroup();
             return {
                 data: defaultGroup,
-                total: defaultGroup.length,
+                total: defaultGroup.length
             };
         };
         // 没登录返回默认群
@@ -29,7 +29,7 @@ class ChatController extends Controller {
         const ret = await this.service.chat.getGroupListById(userid);
         this.ctx.body = {
             data: ret,
-            total: ret.length,
+            total: ret.length
         };
     }
 }

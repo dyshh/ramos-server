@@ -1,6 +1,7 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
+const { secret } = require('../app/utils/token');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -16,7 +17,7 @@ module.exports = appInfo => {
     config.keys = appInfo.name + '_1552570996721_5812';
 
     // add your middleware config here
-    // config.middleware = [ 'error' ];
+    config.middleware = [];
 
     // add your user config here
     const userConfig = {
@@ -24,11 +25,11 @@ module.exports = appInfo => {
             namespace: {
                 '/': {
                     connectionMiddleware: [
-                        'connection', // 这个是连接中间件， 只在connection的时候触发
+                        'connection' // 这个是连接中间件， 只在connection的时候触发
                     ],
-                    packetMiddleware: [], // 这个会在每次消息的时候触发
-                },
-            },
+                    packetMiddleware: [] // 这个会在每次消息的时候触发
+                }
+            }
         },
 
         mysql: {
@@ -43,21 +44,21 @@ module.exports = appInfo => {
                 // 密码
                 password: 'root',
                 // 数据库名
-                database: 'chatroom',
+                database: 'chatroom'
             },
             // 是否加载到 app 上，默认开启
             app: true,
             // 是否加载到 agent 上，默认关闭
-            agent: false,
+            agent: false
         },
 
         jwt: {
-            secret: 'token',
-        },
+            secret
+        }
     };
 
     return {
         ...config,
-        ...userConfig,
+        ...userConfig
     };
 };

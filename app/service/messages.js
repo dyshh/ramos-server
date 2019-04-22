@@ -8,21 +8,19 @@ module.exports = app => {
                 message,
                 from_user_id,
                 to_group_id,
-                created_at: moment().format('YYYY-MM-DD hh:mm:ss'),
+                created_at: moment().format('YYYY-MM-DD hh:mm:ss')
             });
         }
 
-        async getHistoryList({
-            groupId, page = 1, size = 10,
-        }) {
+        async getHistoryList({ groupId, page = 1, size = 10 }) {
             const offset = size * (page - 1);
             const ret = await this.app.mysql.select('group_msg', {
                 where: {
-                    to_group_id: groupId,
+                    to_group_id: groupId
                 },
-                orders: [[ 'created_at', 'desc' ]],
+                orders: [['created_at', 'desc']],
                 limit: +size,
-                offset: +offset,
+                offset: +offset
             });
             return ret;
         }

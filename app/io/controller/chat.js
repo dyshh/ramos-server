@@ -11,16 +11,15 @@ class ChatController extends Controller {
         const { insertId } = await ctx.service.messages.create({
             message,
             from_user_id,
-            to_group_id,
+            to_group_id
         });
         nsp.emit('message', {
             id: insertId,
             message,
             from_user_id,
-            to_group_id,
+            to_group_id
         });
     }
 }
 
 module.exports = ChatController;
-

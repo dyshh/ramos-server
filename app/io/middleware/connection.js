@@ -13,24 +13,23 @@ module.exports = function robotMiddleware() {
             await ctx.service.user.update({
                 id: payload.id,
                 socket_id: socket.id,
-                status: 1,
+                status: 1
             });
             // 返回通过登录验证消息
             socket.emit('auth', {
                 login: true,
                 userInfo: {
-                    id: payload.id,
-                },
+                    id: payload.id
+                }
             });
 
             await next();
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError) {
                 socket.emit('auth', {
-                    login: false,
+                    login: false
                 });
             }
         }
-
     };
 };

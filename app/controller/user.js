@@ -6,9 +6,7 @@ const { generateToken } = require('../utils/token');
 
 class UserController extends Controller {
     async login() {
-        const {
-            name, password,
-        } = this.ctx.request.body;
+        const { name, password } = this.ctx.request.body;
         const user = await this.ctx.service.user.findOne({ name });
         assert(user, '用户名不存在');
         const isPasswordCorrect = password === user.password;
@@ -18,10 +16,10 @@ class UserController extends Controller {
             data: {
                 token,
                 userInfo: {
-                    id: user.id,
-                },
+                    id: user.id
+                }
             },
-            message: '登录成功',
+            message: '登录成功'
         };
     }
 }

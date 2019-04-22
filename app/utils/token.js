@@ -5,8 +5,12 @@ const secret = 'token';
 exports.secret = secret;
 
 exports.generateToken = function generateToken(userid) {
-    const token = jwt.sign({
-        id: userid,
-    }, secret, { expiresIn: '10s' });
+    const token = jwt.sign(
+        {
+            id: userid
+        },
+        secret,
+        { expiresIn: '1h' }
+    );
     return token;
 };
