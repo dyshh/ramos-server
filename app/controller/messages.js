@@ -17,7 +17,10 @@ class MessageController extends Controller {
                 username: name,
             };
         }));
-        this.ctx.body = ret;
+        this.ctx.body = {
+            data: ret,
+            total: ret.length,
+        };
     }
 }
 

@@ -1,11 +1,36 @@
 'use strict';
-// io模块的中间件， 在config/config.default里配置成connectionMiddleware， 只在connection的时候触发
+const { secret } = require('../../utils/token');
+const jwt = require('jsonwebtoken');
+// 校验token信息
 module.exports = function robotMiddleware() {
     return async (ctx, next) => {
-        const { app } = ctx;
-        const nsp = app.io.of('/');
-        // 向客户端推送online事件
-        nsp.emit('online', '有新成员加入聊天室了');
-        await next();
+        const { socket } = ctx;
+        const { token } = socket.handshake.query;
+        // 验证token
+        try {
+            const payload = jwt.verify(token, secret);
+            // 更新用户socket信息
+            await ctx.service.user.update({
+                id: payload.id,
+                socket_id: socket.id,
+                status: 1,
+            });
+            // 返回通过登录验证消息
+            socket.emit('auth', {
+                login: true,
+                userInfo: {
+                    id: payload.id,
+                },
+            });
+
+            await next();
+        } catch (err) {
+            if (err instanceof jwt.TokenExpiredError) {
+                socket.emit('auth', {
+                    login: false,
+                });
+            }
+        }
+
     };
 };

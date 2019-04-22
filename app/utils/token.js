@@ -1,5 +1,12 @@
 'use strict';
+const jwt = require('jsonwebtoken');
+const secret = 'token';
 
-exports.generateToken = function generateToken(userid, ) {
+exports.secret = secret;
 
+exports.generateToken = function generateToken(userid) {
+    const token = jwt.sign({
+        id: userid,
+    }, secret, { expiresIn: '10s' });
+    return token;
 };

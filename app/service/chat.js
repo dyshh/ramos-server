@@ -1,9 +1,7 @@
 'use strict';
 module.exports = app => {
     return class ChatService extends app.Service {
-        async getGroupListById({
-            uid,
-        }) {
+        async getGroupListById(uid) {
             const arr = await this.app.mysql.select('group_user_relation', {
                 where: {
                     user_id: uid,
@@ -13,6 +11,13 @@ module.exports = app => {
                 id: item.to_group_id,
             })));
             return ret;
+        }
+        async getDefaultGroup() {
+            return await this.app.mysql.select('group_info', {
+                where: {
+                    id: 1,
+                },
+            });
         }
     };
 };
