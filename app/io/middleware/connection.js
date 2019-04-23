@@ -2,24 +2,28 @@
 const { secret } = require('../../utils/token');
 const jwt = require('jsonwebtoken');
 // 校验token信息
-module.exports = function robotMiddleware() {
+module.exports = function connection() {
     return async (ctx, next) => {
         const { socket } = ctx;
         const { token } = socket.handshake.query;
         // 验证token
         try {
-            const payload = jwt.verify(token, secret);
+            const { id } = jwt.verify(token, secret);
             // 更新用户socket信息
             await ctx.service.user.update({
-                id: payload.id,
+                id,
                 socket_id: socket.id,
                 status: 1
+            });
+            const user = await ctx.service.user.findOne({
+                id
             });
             // 返回通过登录验证消息
             socket.emit('auth', {
                 login: true,
                 userInfo: {
-                    id: payload.id
+                    id,
+                    username: user.name
                 }
             });
 

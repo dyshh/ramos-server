@@ -23,5 +23,11 @@ module.exports = app => {
                 }
             });
         }
+        async groupAddUser({ to_group_id, user_id }) {
+            return await this.app.mysql.insert('group_user_relation', {
+                to_group_id,
+                user_id
+            });
+        }
     };
 };
