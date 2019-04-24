@@ -1,5 +1,5 @@
 'use strict';
-const moment = require('moment');
+
 module.exports = app => {
     return class UserService extends app.Service {
         async create({ message, from_user_id, to_group_id }) {
@@ -8,7 +8,7 @@ module.exports = app => {
                 message,
                 from_user_id,
                 to_group_id,
-                created_at: moment().format('YYYY-MM-DD hh:mm:ss')
+                created_at: new Date()
             });
         }
 

@@ -13,12 +13,6 @@ class UserController extends Controller {
         const isPasswordCorrect = bcrypt.compareSync(password, user.password);
         assert(isPasswordCorrect, '密码错误');
         const token = generateToken(user.id);
-        // 更新用户表登录状态
-        await this.ctx.service.user.update({
-            id: user.id,
-            status: 1
-        });
-        // 查出用户对象
         this.ctx.body = {
             data: {
                 token,
@@ -39,15 +33,11 @@ class UserController extends Controller {
         const params = {
             name,
             password: hash,
-            salt
+            salt,
+            created_at: new Date()
         };
         const { insertId } = await this.ctx.service.user.create(params);
         const token = generateToken(insertId);
-        // 更新用户表登录状态
-        await this.ctx.service.user.update({
-            id: insertId,
-            status: 1
-        });
         // 加到默认群组
         await this.ctx.service.chat.groupAddUser({
             to_group_id: 1,
@@ -59,11 +49,21 @@ class UserController extends Controller {
                 token,
                 userInfo: {
                     id: insertId,
-                    username: user.name
+                    username: name
                 }
             },
             message: '注册成功'
         };
+    }
+    async logout() {
+        const { ctx } = this;
+        const { uid } = ctx.params;
+        await ctx.service.user.update({
+            id: uid,
+            status: 0,
+            socket_id: null
+        });
+        this.ctx.body = {};
     }
 }
 

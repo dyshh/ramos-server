@@ -17,13 +17,13 @@ class ChatController extends Controller {
         const user = await ctx.service.user.findOne({
             id: from_user_id
         });
-        nsp.emit('message', {
+        nsp.to(to_group_id).emit('message', {
             id: insertId,
             message,
             from_user_id,
             to_group_id,
             username: user.name,
-            created_at: moment().format()
+            created_at: moment().format('hh:ss:mm')
         });
     }
 }

@@ -3,17 +3,19 @@
 const Controller = require('egg').Controller;
 
 class UserController extends Controller {
-    async logout() {
-        const { ctx, app } = this;
-        const nsp = app.io.of('/');
-        const [{ userid }] = ctx.args;
-
-        await ctx.service.user.update({
-            id: userid,
-            status: 0,
-            socket_id: null
+    // 断线，如关闭浏览器、断网等
+    async disconnect() {
+        const { ctx } = this;
+        const user = await ctx.service.user.findOne({
+            socket_id: ctx.socket.id
         });
-        nsp.emit('logout');
+        if (user) {
+            await ctx.service.user.update({
+                id: user.id,
+                status: 0,
+                socket_id: null
+            });
+        }
     }
 }
 

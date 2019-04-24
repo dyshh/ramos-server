@@ -10,6 +10,8 @@ module.exports = app => {
     router.post('/login', controller.user.login);
     // 注册
     router.post('/register', controller.user.register);
+    // 注销
+    router.post('/logout/:uid', controller.user.logout);
     // 获取聊天列表
     router.get('/chat_list', controller.chat.getChatList);
     // 获取群组聊天记录
@@ -18,6 +20,8 @@ module.exports = app => {
     /** ----------------socket------------------- */
     // 发消息
     io.of('/').route('message', io.controller.chat.sendMsg);
-    // 退出登录
-    io.of('/').route('logout', io.controller.user.logout);
+    // 断线
+    io.of('/').route('disconnect', io.controller.user.disconnect);
+    // 手动初始化socket和群组，用于登录后
+    io.of('/').route('init', io.controller.socket.init);
 };
