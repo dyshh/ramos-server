@@ -12,6 +12,10 @@ module.exports = app => {
             });
         }
 
+        /**
+         * 获取历史消息列表
+         * @param {object} param0 参数
+         */
         async getHistoryList({ groupId, page = 1, size = 10 }) {
             const offset = size * (page - 1);
             const ret = await this.app.mysql.select('group_msg', {
