@@ -16,6 +16,8 @@ module.exports = app => {
     router.get('/chat_list', controller.chat.getChatList);
     // 获取群组聊天记录
     router.get('/message/group/:group_id', controller.messages.getHistoryList);
+    // 上传头像
+    router.post('/upload_avatar', controller.user.uploadAvatar);
 
     /** ----------------socket------------------- */
     // 发消息

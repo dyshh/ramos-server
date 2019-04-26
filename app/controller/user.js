@@ -4,6 +4,8 @@ const Controller = require('egg').Controller;
 const assert = require('assert');
 const { generateToken } = require('../utils/token');
 const bcrypt = require('bcrypt');
+const fs = require('mz/fs');
+const path = require('path');
 
 class UserController extends Controller {
     async login() {
@@ -18,7 +20,8 @@ class UserController extends Controller {
                 token,
                 userInfo: {
                     id: user.id,
-                    username: user.name
+                    username: user.name,
+                    avatar: user.avatar
                 }
             },
             message: '登录成功'
@@ -64,6 +67,38 @@ class UserController extends Controller {
             socket_id: null
         });
         this.ctx.body = {};
+    }
+    async uploadAvatar() {
+        const { ctx } = this;
+        const { user_id } = ctx.request.query;
+        const file = ctx.request.files[0];
+        const basename = path.basename(file.filepath);
+        const destUrl = path.resolve('app/public/avatar', basename);
+        try {
+            // 查现在的头像地址
+            const { avatar } = await ctx.service.user.findOne({
+                id: user_id
+            });
+            // 删现在的头像
+            if (avatar) {
+                await fs.unlink(path.resolve('app', avatar));
+            }
+            // 复制到public目录下
+            await fs.copyFile(file.filepath, destUrl);
+            // 更新用户表
+            await ctx.service.user.update({
+                id: user_id,
+                avatar: `public/avatar/${basename}`
+            });
+            this.ctx.body = {
+                data: {
+                    avatar: `public/avatar/${basename}`
+                }
+            };
+        } finally {
+            // 删除临时文件
+            await fs.unlink(file.filepath);
+        }
     }
 }
 

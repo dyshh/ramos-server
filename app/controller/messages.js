@@ -14,12 +14,13 @@ class MessageController extends Controller {
         const ret = await Promise.all(
             messages.map(async item => {
                 const { from_user_id } = item;
-                const { name } = await this.service.user.findOne({
+                const { name, avatar } = await this.service.user.findOne({
                     id: from_user_id
                 });
                 return {
                     ...item,
-                    username: name
+                    username: name,
+                    avatar
                 };
             })
         );

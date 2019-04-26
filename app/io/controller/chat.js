@@ -1,7 +1,6 @@
 'use strict';
 
 const Controller = require('egg').Controller;
-const moment = require('moment');
 
 class ChatController extends Controller {
     async sendMsg() {
@@ -23,7 +22,7 @@ class ChatController extends Controller {
             from_user_id,
             to_group_id,
             username: user.name,
-            created_at: moment().format('hh:ss:mm')
+            created_at: new Date()
         });
     }
 }

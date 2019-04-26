@@ -23,7 +23,7 @@ module.exports = function connection() {
                 ctx.socket.join(item.id);
             }
             // 查用户信息
-            const user = await ctx.service.user.findOne({
+            const { name, avatar } = await ctx.service.user.findOne({
                 id
             });
             // 返回通过登录验证消息
@@ -31,7 +31,8 @@ module.exports = function connection() {
                 login: true,
                 userInfo: {
                     id,
-                    username: user.name
+                    username: name,
+                    avatar
                 }
             });
 
