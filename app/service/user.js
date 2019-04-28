@@ -16,9 +16,7 @@ module.exports = app => {
             // 假如 我们拿到用户 id 从数据库获取用户详细信息
             return await this.app.mysql.update(
                 this.TABLE_NAME,
-                {
-                    ...omit(params, ['id'])
-                },
+                JSON.parse(JSON.stringify(omit(params, ['id']))),
                 {
                     where: {
                         id: params.id

@@ -100,6 +100,30 @@ class UserController extends Controller {
             await fs.unlink(file.filepath);
         }
     }
+    async updateUserInfo() {
+        const { uid } = this.ctx.params;
+        const { username, oldpsw, newpsw } = this.ctx.request.body;
+        let hash;
+        if (oldpsw) {
+            const { password } = await this.ctx.service.user.findOne({
+                id: uid
+            });
+            const isCorrect = await bcrypt.compare(oldpsw, password);
+            assert(isCorrect, '旧密码错误');
+
+            const salt = await bcrypt.genSalt(10);
+            hash = await bcrypt.hash(newpsw, salt);
+        }
+        await this.ctx.service.user.update({
+            id: uid,
+            name: username,
+            password: hash
+        });
+
+        this.ctx.body = {
+            success: true
+        };
+    }
 }
 
 module.exports = UserController;
