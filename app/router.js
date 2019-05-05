@@ -28,4 +28,9 @@ module.exports = app => {
     io.of('/').route('disconnect', io.controller.user.disconnect);
     // 手动初始化socket和群组，用于登录后
     io.of('/').route('init', io.controller.socket.init);
+    // 在线群成员
+    io.of('/').route(
+        'group_online_members',
+        io.controller.socket.onlineMembers
+    );
 };

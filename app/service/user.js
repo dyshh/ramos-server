@@ -24,5 +24,8 @@ module.exports = app => {
                 }
             );
         }
+        async select(params) {
+            return await this.app.mysql.select(this.TABLE_NAME, { ...params });
+        }
     };
 };
