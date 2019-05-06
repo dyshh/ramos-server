@@ -13,7 +13,6 @@ module.exports = app => {
             return await this.app.mysql.insert(this.TABLE_NAME, params);
         }
         async update(params) {
-            // 假如 我们拿到用户 id 从数据库获取用户详细信息
             return await this.app.mysql.update(
                 this.TABLE_NAME,
                 JSON.parse(JSON.stringify(omit(params, ['id']))),
@@ -26,6 +25,17 @@ module.exports = app => {
         }
         async select(params) {
             return await this.app.mysql.select(this.TABLE_NAME, { ...params });
+        }
+        /**
+         * 获取所有在线用户
+         */
+        async getAllOnlineUsers() {
+            return await this.select({
+                where: {
+                    status: 1
+                },
+                columns: ['id', 'name', 'avatar']
+            });
         }
     };
 };

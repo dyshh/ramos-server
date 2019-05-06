@@ -13,10 +13,24 @@ class SocketController extends Controller {
             status: 1,
             socket_id: ctx.socket.id
         });
-        const groupList = await this.ctx.service.chat.getGroupListById(userid);
+        const groupList = await ctx.service.group.getGroupsByUserId(userid);
         for (const item of groupList) {
-            ctx.socket.join(item.id);
+            const { to_group_id } = item;
+            ctx.socket.join(to_group_id);
         }
+        await this.ctx.service.group.emitLoginStatus(userid);
+    }
+
+    async onlineMembers() {
+        const [{ group_id }] = this.ctx.args;
+        const onlineMembersInThisGroup = await this.ctx.service.group.getOnlineMembersByGroupId(
+            group_id
+        );
+        const nsp = this.app.io.of('/');
+        nsp.to(this.ctx.socket.id).emit('group_online_members', {
+            group_id,
+            list: onlineMembersInThisGroup
+        });
     }
 }
 

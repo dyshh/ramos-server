@@ -6,11 +6,7 @@ module.exports = app => {
          * @param {number} uid 用户id
          */
         async getGroupListById(uid) {
-            const arr = await this.app.mysql.select('group_user_relation', {
-                where: {
-                    user_id: uid
-                }
-            });
+            const arr = await this.ctx.service.group.getGroupsByUserId(uid);
             const originList = await Promise.all(
                 arr.map(item =>
                     this.app.mysql.get('group_info', {
@@ -31,12 +27,6 @@ module.exports = app => {
                 }
             });
             return await this.joinMsgInfoToGroupList(originList);
-        }
-        async groupAddUser({ to_group_id, user_id }) {
-            return await this.app.mysql.insert('group_user_relation', {
-                to_group_id,
-                user_id
-            });
         }
 
         /**

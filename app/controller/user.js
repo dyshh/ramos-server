@@ -42,7 +42,7 @@ class UserController extends Controller {
         const { insertId } = await this.ctx.service.user.create(params);
         const token = generateToken(insertId);
         // 加到默认群组
-        await this.ctx.service.chat.groupAddUser({
+        await this.ctx.service.group.groupAddUser({
             to_group_id: 1,
             user_id: insertId
         });
@@ -67,6 +67,8 @@ class UserController extends Controller {
             socket_id: null
         });
         this.ctx.body = {};
+        // 通知所在群这个人下线了
+        await this.ctx.service.group.emitLoginStatus(uid);
     }
     async uploadAvatar() {
         const { ctx } = this;

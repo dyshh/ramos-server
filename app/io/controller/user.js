@@ -16,6 +16,8 @@ class UserController extends Controller {
                 socket_id: null
             });
         }
+        // 通知所在群这个人下线了
+        await this.ctx.service.group.emitLoginStatus(user.id);
     }
 }
 
