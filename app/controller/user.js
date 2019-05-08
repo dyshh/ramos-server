@@ -6,6 +6,7 @@ const { generateToken } = require('../utils/token');
 const bcrypt = require('bcrypt');
 const fs = require('mz/fs');
 const path = require('path');
+const { isEmpty } = require('lodash');
 
 class UserController extends Controller {
     async login() {
@@ -124,6 +125,35 @@ class UserController extends Controller {
 
         this.ctx.body = {
             success: true
+        };
+    }
+    async searchUsersAndGroups() {
+        const { keyword } = this.ctx.request.query;
+        const ret = {};
+        if (!keyword) {
+            this.ctx.body = {
+                data: ret,
+                total: 0
+            };
+            return;
+        }
+        // 查用户表
+        const userRet = await this.app.mysql.query(
+            `select id, name, avatar from user where name like '%${keyword}%'`
+        );
+        if (!isEmpty(userRet)) {
+            ret.users = userRet;
+        }
+        // 查群表
+        const groupRet = await this.app.mysql.query(
+            `select * from group_info where name like '%${keyword}%'`
+        );
+        if (!isEmpty(groupRet)) {
+            ret.groups = groupRet;
+        }
+        this.ctx.body = {
+            data: ret,
+            total: userRet.length + groupRet.length
         };
     }
 }

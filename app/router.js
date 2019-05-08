@@ -20,6 +20,8 @@ module.exports = app => {
     router.post('/upload_avatar', controller.user.uploadAvatar);
     // 修改用户信息，用户名和密码
     router.patch('/user/:uid', controller.user.updateUserInfo);
+    // 搜索群组和用户
+    router.get('/search_all', controller.user.searchUsersAndGroups);
 
     /** ----------------socket------------------- */
     // 发消息
