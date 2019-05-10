@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const fs = require('mz/fs');
 const path = require('path');
 const { isEmpty } = require('lodash');
+const moment = require('moment');
 
 class UserController extends Controller {
     async login() {
@@ -154,6 +155,30 @@ class UserController extends Controller {
         this.ctx.body = {
             data: ret,
             total: userRet.length + groupRet.length
+        };
+    }
+
+    async addFriend() {
+        const { uid } = this.ctx.params;
+        const { id } = this.ctx.service.auth.decodeToken();
+        const ret = await this.app.mysql.select('user_user_relation', {
+            user_id: id,
+            friend_id: uid
+        });
+        assert(isEmpty(ret), '对方已经是你的好友');
+        await this.app.mysql.insert('user_user_relation', {
+            user_id: id,
+            friend_id: uid,
+            created_at: moment().format('YYYY-MM-DD hh:mm:ss')
+        });
+        await this.app.mysql.insert('user_user_relation', {
+            user_id: uid,
+            friend_id: id,
+            created_at: moment().format('YYYY-MM-DD hh:mm:ss')
+        });
+
+        this.ctx.body = {
+            data: {}
         };
     }
 }

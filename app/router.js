@@ -22,6 +22,8 @@ module.exports = app => {
     router.patch('/user/:uid', controller.user.updateUserInfo);
     // 搜索群组和用户
     router.get('/search_all', controller.user.searchUsersAndGroups);
+    // 添加好友
+    router.post('/add_friend/:uid', controller.user.addFriend);
 
     /** ----------------socket------------------- */
     // 发消息

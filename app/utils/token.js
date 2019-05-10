@@ -10,7 +10,7 @@ exports.generateToken = function generateToken(userid) {
             id: userid
         },
         secret,
-        { expiresIn: '1h' }
+        { expiresIn: '3d' }
     );
     return token;
 };
