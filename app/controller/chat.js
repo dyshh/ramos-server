@@ -9,8 +9,9 @@ class ChatController extends Controller {
         const getDefaultGroup = async () => {
             const defaultGroup = await this.ctx.service.chat.getDefaultGroup();
             return {
-                data: defaultGroup,
-                total: defaultGroup.length
+                data: {
+                    groups: defaultGroup
+                }
             };
         };
         const { id: userid, exp } = this.ctx.service.auth.decodeToken();
@@ -20,10 +21,13 @@ class ChatController extends Controller {
                 this.ctx.body = await getDefaultGroup();
                 return;
             }
-            const ret = await this.service.chat.getGroupListById(userid);
+            const groups = await this.service.chat.getGroupListById(userid);
+            const friends = await this.service.chat.getFriendListById(userid);
             this.ctx.body = {
-                data: ret,
-                total: ret.length
+                data: {
+                    groups,
+                    friends
+                }
             };
         } else {
             // 没登录返回默认群

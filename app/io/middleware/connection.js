@@ -9,7 +9,7 @@ module.exports = function connection() {
         // 验证token
         try {
             // 没登录也要把默认群加到socket里，这样没登录才收的到消息
-            ctx.socket.join(1); // 默认群id为1
+            ctx.socket.join('cb437f5a-7557-11e9-8f9e-2a86e4085a59'); // 默认群id
             const { id } = jwt.verify(token, secret);
             // 更新用户socket信息
             await ctx.service.user.update({
@@ -20,7 +20,7 @@ module.exports = function connection() {
             // 把room加进socket
             const groupList = await ctx.service.chat.getGroupListById(id);
             for (const item of groupList) {
-                ctx.socket.join(item.id);
+                ctx.socket.join(item.to_group_id);
             }
             // 查用户信息
             const { name, avatar } = await ctx.service.user.findOne({

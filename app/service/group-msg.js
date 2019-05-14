@@ -1,14 +1,16 @@
 'use strict';
+const moment = require('moment');
 
 module.exports = app => {
-    return class UserService extends app.Service {
+    return class GroupMsgService extends app.Service {
         async create({ message, from_user_id, to_group_id }) {
+            console.log(message, from_user_id, to_group_id);
             // 假如 我们拿到用户 id 从数据库获取用户详细信息
             return await this.app.mysql.insert('group_msg', {
                 message,
                 from_user_id,
                 to_group_id,
-                created_at: new Date()
+                created_at: moment().format('YYYY-MM-DD HH:mm:ss')
             });
         }
 

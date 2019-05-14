@@ -169,12 +169,12 @@ class UserController extends Controller {
         await this.app.mysql.insert('user_user_relation', {
             user_id: id,
             friend_id: uid,
-            created_at: moment().format('YYYY-MM-DD hh:mm:ss')
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss')
         });
         await this.app.mysql.insert('user_user_relation', {
             user_id: uid,
             friend_id: id,
-            created_at: moment().format('YYYY-MM-DD hh:mm:ss')
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss')
         });
 
         this.ctx.body = {

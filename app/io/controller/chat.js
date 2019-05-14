@@ -8,7 +8,7 @@ class ChatController extends Controller {
         const nsp = app.io.of('/');
         const [{ message, from_user_id, to_group_id }] = ctx.args;
         // 先写进库
-        const { insertId } = await ctx.service.messages.create({
+        const { insertId } = await ctx.service.groupMsg.create({
             message,
             from_user_id,
             to_group_id
