@@ -12,6 +12,7 @@ module.exports = app => {
             const originList = await this.app.mysql.query(sql, data);
             return this.joinMsgInfoToPrivateList(originList, uid);
         }
+
         /**
          * 根据用户id获取他加的群组列表
          * @param {number} uid 用户id
@@ -69,6 +70,11 @@ module.exports = app => {
             );
         }
 
+        /**
+         * 给私聊列表加上最新消息
+         * @param {array} originList 原始群列表
+         * @param {number} from_user_id 发送方id
+         */
         async joinMsgInfoToPrivateList(originList, from_user_id) {
             return await Promise.all(
                 originList.map(async item => {

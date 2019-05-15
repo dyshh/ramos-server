@@ -3,6 +3,9 @@
 const Controller = require('egg').Controller;
 
 class MessageController extends Controller {
+    /**
+     * 返回某个群聊或私聊历史消息
+     */
     async getHistoryList() {
         const { id } = this.ctx.params;
         const { type, page, size } = this.ctx.query;

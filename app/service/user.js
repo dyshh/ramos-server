@@ -3,18 +3,15 @@ const { omit } = require('lodash');
 
 module.exports = app => {
     return class UserService extends app.Service {
-        get TABLE_NAME() {
-            return 'user';
-        }
         async findOne(params) {
-            return await this.app.mysql.get(this.TABLE_NAME, { ...params });
+            return await this.app.mysql.get('user', { ...params });
         }
         async create(params) {
-            return await this.app.mysql.insert(this.TABLE_NAME, params);
+            return await this.app.mysql.insert('user', params);
         }
         async update(params) {
             return await this.app.mysql.update(
-                this.TABLE_NAME,
+                'user',
                 JSON.parse(JSON.stringify(omit(params, ['id']))),
                 {
                     where: {
@@ -24,7 +21,7 @@ module.exports = app => {
             );
         }
         async select(params) {
-            return await this.app.mysql.select(this.TABLE_NAME, { ...params });
+            return await this.app.mysql.select('user', { ...params });
         }
         /**
          * 获取所有在线用户

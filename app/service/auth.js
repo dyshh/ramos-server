@@ -4,8 +4,8 @@ const secret = require('../utils/token');
 
 module.exports = app => {
     return class UserService extends app.Service {
+        // 提取token
         decodeToken() {
-            // 提取token
             const parts = this.ctx.header.authorization.split(' ');
             const scheme = parts[0];
             const token = parts[1];

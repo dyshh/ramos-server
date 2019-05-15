@@ -128,6 +128,10 @@ class UserController extends Controller {
             success: true
         };
     }
+
+    /**
+     * 搜索群和用户
+     */
     async searchUsersAndGroups() {
         const { keyword } = this.ctx.request.query;
         const ret = {};
@@ -158,6 +162,9 @@ class UserController extends Controller {
         };
     }
 
+    /**
+     * 加好友
+     */
     async addFriend() {
         const { uid } = this.ctx.params;
         const { id } = this.ctx.service.auth.decodeToken();

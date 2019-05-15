@@ -3,6 +3,9 @@
 const Controller = require('egg').Controller;
 
 class SocketController extends Controller {
+    /**
+     * 用户登录和注册后初始化socket
+     */
     async init() {
         const { ctx } = this;
         const [{ userid }] = ctx.args;
@@ -21,6 +24,9 @@ class SocketController extends Controller {
         await this.ctx.service.group.emitLoginStatus(userid);
     }
 
+    /**
+     * 在线群成员
+     */
     async onlineMembers() {
         const [{ group_id }] = this.ctx.args;
         const onlineMembersInThisGroup = await this.ctx.service.group.getOnlineMembersByGroupId(

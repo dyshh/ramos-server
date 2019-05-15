@@ -3,6 +3,9 @@
 const Controller = require('egg').Controller;
 
 class ChatController extends Controller {
+    /**
+     * 向客户端的群聊或私聊发消息
+     */
     async sendMsg() {
         const { ctx, app } = this;
         const nsp = app.io.of('/');
