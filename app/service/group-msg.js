@@ -4,7 +4,6 @@ const moment = require('moment');
 module.exports = app => {
     return class GroupMsgService extends app.Service {
         async create({ message, from_user_id, to_group_id }) {
-            console.log(message, from_user_id, to_group_id);
             // 假如 我们拿到用户 id 从数据库获取用户详细信息
             return await this.app.mysql.insert('group_msg', {
                 message,
@@ -20,15 +19,10 @@ module.exports = app => {
          */
         async getHistoryList({ groupId, page = 1, size = 10 }) {
             const offset = size * (page - 1);
-            const ret = await this.app.mysql.select('group_msg', {
-                where: {
-                    to_group_id: groupId
-                },
-                orders: [['created_at', 'desc']],
-                limit: +size,
-                offset: +offset
-            });
-            return ret;
+            const data = [groupId, offset, +size];
+            const sql =
+                'SELECT g.from_user_id,g.to_group_id,g.message,g.created_at,u.avatar,u.name,u.status FROM group_msg as g inner join user as u on g.from_user_id = u.id where (g.to_group_id = ?) order by g.created_at desc limit ?,?';
+            return await this.app.mysql.query(sql, data);
         }
     };
 };

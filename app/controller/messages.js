@@ -4,29 +4,29 @@ const Controller = require('egg').Controller;
 
 class MessageController extends Controller {
     async getHistoryList() {
-        const { group_id: groupId } = this.ctx.params;
-        const { page, size } = this.ctx.query;
-        const messages = await this.service.messages.getHistoryList({
-            groupId,
-            page,
-            size
-        });
-        const ret = await Promise.all(
-            messages.map(async item => {
-                const { from_user_id } = item;
-                const { name, avatar } = await this.service.user.findOne({
-                    id: from_user_id
-                });
-                return {
-                    ...item,
-                    username: name,
-                    avatar
-                };
-            })
-        );
+        const { id } = this.ctx.params;
+        const { type, page, size } = this.ctx.query;
+        let ret;
+        if (type === '0') {
+            // 群聊
+            ret = await this.service.groupMsg.getHistoryList({
+                groupId: id,
+                page,
+                size
+            });
+        } else {
+            // 私聊
+            const { id: from_user_id } = this.ctx.service.auth.decodeToken();
+            ret = await this.service.privateMsg.getHistoryList({
+                from_user_id,
+                to_user_id: id,
+                page,
+                size
+            });
+        }
+
         this.ctx.body = {
-            data: ret,
-            total: ret.length
+            data: ret
         };
     }
 }
