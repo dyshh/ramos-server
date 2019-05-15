@@ -2,6 +2,17 @@
 module.exports = app => {
     return class ChatService extends app.Service {
         /**
+         * 根据用户id获取他的好友列表
+         * @param {number} uid 用户id
+         */
+        async getFriendListById(uid) {
+            const data = [uid];
+            const sql =
+                'SELECT u.id,u.name,u.avatar,u.created_at,u.status FROM user_user_relation AS uu INNER JOIN user AS u ON uu.friend_id = u.id WHERE uu.user_id = ?';
+            const originList = await this.app.mysql.query(sql, data);
+            return this.joinMsgInfoToPrivateList(originList, uid);
+        }
+        /**
          * 根据用户id获取他加的群组列表
          * @param {number} uid 用户id
          */
@@ -10,7 +21,7 @@ module.exports = app => {
             const originList = await Promise.all(
                 arr.map(item =>
                     this.app.mysql.get('group_info', {
-                        id: item.to_group_id
+                        to_group_id: item.to_group_id
                     })
                 )
             );
@@ -23,7 +34,7 @@ module.exports = app => {
         async getDefaultGroup() {
             const originList = await this.app.mysql.select('group_info', {
                 where: {
-                    id: 1
+                    to_group_id: 'cb437f5a-7557-11e9-8f9e-2a86e4085a59'
                 }
             });
             return await this.joinMsgInfoToGroupList(originList);
@@ -36,9 +47,9 @@ module.exports = app => {
         async joinMsgInfoToGroupList(originList) {
             return await Promise.all(
                 originList.map(async item => {
-                    const { id } = item;
-                    const ret = await this.ctx.service.messages.getHistoryList({
-                        groupId: id,
+                    const { to_group_id } = item;
+                    const ret = await this.ctx.service.groupMsg.getHistoryList({
+                        groupId: to_group_id,
                         page: 1,
                         size: 1
                     });
@@ -51,6 +62,29 @@ module.exports = app => {
                         lastest_message_info: {
                             from_user_id,
                             from_user_name: name,
+                            last_message: message
+                        }
+                    };
+                })
+            );
+        }
+
+        async joinMsgInfoToPrivateList(originList, from_user_id) {
+            return await Promise.all(
+                originList.map(async item => {
+                    const { id } = item;
+                    const ret = await this.ctx.service.privateMsg.getHistoryList(
+                        {
+                            from_user_id,
+                            to_user_id: id,
+                            page: 1,
+                            size: 1
+                        }
+                    );
+                    const { message } = ret[0];
+                    return {
+                        ...item,
+                        lastest_message_info: {
                             last_message: message
                         }
                     };
