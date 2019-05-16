@@ -54,6 +54,10 @@ module.exports = app => {
                         page: 1,
                         size: 1
                     });
+                    if (!ret[0]) {
+                        // 新建的群或没消息的群
+                        return item;
+                    }
                     const { message, from_user_id } = ret[0];
                     const { name } = await this.ctx.service.user.findOne({
                         id: from_user_id
@@ -87,6 +91,9 @@ module.exports = app => {
                             size: 1
                         }
                     );
+                    if (!ret[0]) {
+                        return item;
+                    }
                     const { message } = ret[0];
                     return {
                         ...item,

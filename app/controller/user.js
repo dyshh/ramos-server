@@ -6,8 +6,6 @@ const { generateToken } = require('../utils/token');
 const bcrypt = require('bcrypt');
 const fs = require('mz/fs');
 const path = require('path');
-const { isEmpty } = require('lodash');
-const moment = require('moment');
 
 class UserController extends Controller {
     async login() {
@@ -126,66 +124,6 @@ class UserController extends Controller {
 
         this.ctx.body = {
             success: true
-        };
-    }
-
-    /**
-     * 搜索群和用户
-     */
-    async searchUsersAndGroups() {
-        const { keyword } = this.ctx.request.query;
-        const ret = {};
-        if (!keyword) {
-            this.ctx.body = {
-                data: ret,
-                total: 0
-            };
-            return;
-        }
-        // 查用户表
-        const userRet = await this.app.mysql.query(
-            `select id, name, avatar from user where name like '%${keyword}%'`
-        );
-        if (!isEmpty(userRet)) {
-            ret.users = userRet;
-        }
-        // 查群表
-        const groupRet = await this.app.mysql.query(
-            `select * from group_info where name like '%${keyword}%'`
-        );
-        if (!isEmpty(groupRet)) {
-            ret.groups = groupRet;
-        }
-        this.ctx.body = {
-            data: ret,
-            total: userRet.length + groupRet.length
-        };
-    }
-
-    /**
-     * 加好友
-     */
-    async addFriend() {
-        const { uid } = this.ctx.params;
-        const { id } = this.ctx.service.auth.decodeToken();
-        const ret = await this.app.mysql.select('user_user_relation', {
-            user_id: id,
-            friend_id: uid
-        });
-        assert(isEmpty(ret), '对方已经是你的好友');
-        await this.app.mysql.insert('user_user_relation', {
-            user_id: id,
-            friend_id: uid,
-            created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-        });
-        await this.app.mysql.insert('user_user_relation', {
-            user_id: uid,
-            friend_id: id,
-            created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-        });
-
-        this.ctx.body = {
-            data: {}
         };
     }
 }

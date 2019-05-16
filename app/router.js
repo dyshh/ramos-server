@@ -21,9 +21,13 @@ module.exports = app => {
     // 修改用户信息，用户名和密码
     router.patch('/user/:uid', controller.user.updateUserInfo);
     // 搜索群组和用户
-    router.get('/search_all', controller.user.searchUsersAndGroups);
+    router.get('/search_all', controller.chat.searchUsersAndGroups);
     // 添加好友
-    router.post('/add_friend/:uid', controller.user.addFriend);
+    router.post('/user_user', controller.userUser.create);
+    // 创建新群
+    router.post('/group', controller.group.create);
+    // 主动加群
+    router.post('/group_user', controller.groupUser.create);
 
     /** ----------------socket------------------- */
     // 发消息

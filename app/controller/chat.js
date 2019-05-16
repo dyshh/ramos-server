@@ -2,6 +2,7 @@
 
 const Controller = require('egg').Controller;
 const moment = require('moment');
+const { isEmpty } = require('lodash');
 
 class ChatController extends Controller {
     async getDefaultGroup() {
@@ -35,6 +36,38 @@ class ChatController extends Controller {
             // 没登录返回默认群
             this.ctx.body = await this.getDefaultGroup();
         }
+    }
+    /**
+     * 搜索群和用户
+     */
+    async searchUsersAndGroups() {
+        const { keyword } = this.ctx.request.query;
+        const ret = {};
+        if (!keyword) {
+            this.ctx.body = {
+                data: ret,
+                total: 0
+            };
+            return;
+        }
+        // 查用户表
+        const userRet = await this.app.mysql.query(
+            `select id, name, avatar from user where name like '%${keyword}%'`
+        );
+        if (!isEmpty(userRet)) {
+            ret.users = userRet;
+        }
+        // 查群表
+        const groupRet = await this.app.mysql.query(
+            `select * from group_info where name like '%${keyword}%'`
+        );
+        if (!isEmpty(groupRet)) {
+            ret.groups = groupRet;
+        }
+        this.ctx.body = {
+            data: ret,
+            total: userRet.length + groupRet.length
+        };
     }
 }
 
