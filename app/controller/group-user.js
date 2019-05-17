@@ -6,7 +6,7 @@ const assert = require('assert');
 
 class GroupUserController extends Controller {
     /**
-     * 创建新群
+     * 主动加群
      */
     async create() {
         const { to_group_id } = this.ctx.request.body;

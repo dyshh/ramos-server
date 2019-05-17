@@ -18,15 +18,12 @@ module.exports = app => {
          * @param {number} uid 用户id
          */
         async getGroupListById(uid) {
-            const arr = await this.ctx.service.group.getGroupsByUserId(uid);
-            const originList = await Promise.all(
-                arr.map(item =>
-                    this.app.mysql.get('group_info', {
-                        to_group_id: item.to_group_id
-                    })
-                )
+            const originList = await this.app.mysql.query(
+                'SELECT * FROM group_user_relation AS gu JOIN group_info AS g ON gu.to_group_id = g.to_group_id WHERE gu.user_id = ?',
+                [uid]
             );
-            return await this.joinMsgInfoToGroupList(originList);
+            const msgInfoList = await this.joinMsgInfoToGroupList(originList);
+            return await this.joinUnReadCountToGroupList(msgInfoList);
         }
 
         /**
@@ -58,7 +55,7 @@ module.exports = app => {
                         // 新建的群或没消息的群
                         return item;
                     }
-                    const { message, from_user_id } = ret[0];
+                    const { message, from_user_id, created_at } = ret[0];
                     const { name } = await this.ctx.service.user.findOne({
                         id: from_user_id
                     });
@@ -67,8 +64,35 @@ module.exports = app => {
                         lastest_message_info: {
                             from_user_id,
                             from_user_name: name,
-                            last_message: message
+                            last_message: message,
+                            created_at
                         }
+                    };
+                })
+            );
+        }
+
+        /**
+         * 给群列表加上未读消息数
+         * @param {arrat} originList 原始群列表
+         */
+        async joinUnReadCountToGroupList(originList) {
+            const { id: uid } = this.ctx.service.auth.decodeToken();
+            return await Promise.all(
+                originList.map(async item => {
+                    const { to_group_id } = item;
+                    const ret = await this.app.mysql.query(
+                        'SELECT latest_read_time FROM group_user_relation as gu where gu.to_group_id = ? and gu.user_id = ?',
+                        [to_group_id, uid]
+                    );
+                    const { latest_read_time } = ret[0];
+                    const ret2 = await this.app.mysql.query(
+                        'SELECT count(created_at) as unread FROM group_msg as g where UNIX_TIMESTAMP(g.created_at) > UNIX_TIMESTAMP(?) and g.to_group_id = ?',
+                        [latest_read_time, to_group_id]
+                    );
+                    return {
+                        ...item,
+                        ...ret2[0]
                     };
                 })
             );
@@ -94,11 +118,12 @@ module.exports = app => {
                     if (!ret[0]) {
                         return item;
                     }
-                    const { message } = ret[0];
+                    const { message, created_at } = ret[0];
                     return {
                         ...item,
                         lastest_message_info: {
-                            last_message: message
+                            last_message: message,
+                            created_at
                         }
                     };
                 })

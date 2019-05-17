@@ -36,5 +36,17 @@ module.exports = app => {
                 'SELECT p.id,p.from_user_id,p.to_user_id,p.message,p.created_at,u.avatar,u.name,u.status FROM private_msg as p inner join user as u on p.from_user_id = u.id where (p.from_user_id = ? AND p.to_user_id = ? ) or (p.from_user_id = ? AND p.to_user_id = ? ) order by p.created_at desc limit ?,?';
             return await this.app.mysql.query(sql, data);
         }
+
+        /**
+         * 更新最近阅读时间
+         * @param {number} friend_id 好友id
+         * @param {number} user_id 用户id
+         */
+        async updateLatestReadTime(friend_id, user_id) {
+            return await this.app.mysql.query(
+                'UPDATE user_user_relation SET latest_read_time = ? WHERE friend_id = ? AND user_id = ?',
+                [new Date(), friend_id, user_id]
+            );
+        }
     };
 };

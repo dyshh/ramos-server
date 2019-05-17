@@ -11,17 +11,7 @@ module.exports = app => {
                 user_id
             });
         }
-        /**
-         * 根据群id获取群成员列表
-         * @param {number} gid 群id
-         */
-        async getMembersByGroupId(gid) {
-            return await this.app.mysql.select('group_user_relation', {
-                where: {
-                    to_group_id: gid
-                }
-            });
-        }
+
         /**
          * 根据用户id获取他所在的群列表
          * @param {number} uid 用户id
@@ -33,21 +23,19 @@ module.exports = app => {
                 }
             });
         }
+
         /**
-         * 根据群id获取在线成员
+         * 根据群id获取在线和离线成员
          * @param {number} gid 群id
+         * @param {number} status 是否在线
          */
-        async getOnlineMembersByGroupId(gid) {
-            const allOnlinePeople = await this.ctx.service.user.getAllOnlineUsers();
-            const usersInThisGroup = await this.getMembersByGroupId(gid);
-            const userIdsInThisGroup = usersInThisGroup.map(
-                item => item.user_id
+        async getMembersByGroupId(gid, status = 1) {
+            return await this.app.mysql.query(
+                'SELECT * FROM (SELECT gu.user_id FROM group_info AS g INNER JOIN group_user_relation AS gu ON g.to_group_id = gu.to_group_id WHERE g.to_group_id = ?) as z JOIN user AS u ON z.user_id = u.id WHERE u.status = ?',
+                [gid, status]
             );
-            const onlineMembersInThisGroup = allOnlinePeople.filter(item =>
-                userIdsInThisGroup.includes(item.id)
-            );
-            return onlineMembersInThisGroup;
         }
+
         /**
          * 根据用户id给所在群发登录状态消息
          * @param {number} uid 用户id
@@ -59,7 +47,7 @@ module.exports = app => {
             for (const item of groupList) {
                 const { to_group_id } = item;
                 // 给该用户所在群组发group_online_members
-                const onlineMembersInThisGroup = await this.getOnlineMembersByGroupId(
+                const onlineMembersInThisGroup = await this.getMembersByGroupId(
                     to_group_id
                 );
                 nsp.to(to_group_id).emit('group_online_members', {

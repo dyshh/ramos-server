@@ -18,7 +18,7 @@ module.exports = function connection() {
                 status: 1
             });
             // 把room加进socket
-            const groupList = await ctx.service.chat.getGroupListById(id);
+            const groupList = await ctx.service.group.getGroupsByUserId(id);
             for (const item of groupList) {
                 ctx.socket.join(item.to_group_id);
             }

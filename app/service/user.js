@@ -23,16 +23,5 @@ module.exports = app => {
         async select(params) {
             return await this.app.mysql.select('user', { ...params });
         }
-        /**
-         * 获取所有在线用户
-         */
-        async getAllOnlineUsers() {
-            return await this.select({
-                where: {
-                    status: 1
-                },
-                columns: ['id', 'name', 'avatar']
-            });
-        }
     };
 };

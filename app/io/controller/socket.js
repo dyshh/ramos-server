@@ -29,13 +29,15 @@ class SocketController extends Controller {
      */
     async onlineMembers() {
         const [{ group_id }] = this.ctx.args;
-        const onlineMembersInThisGroup = await this.ctx.service.group.getOnlineMembersByGroupId(
-            group_id
-        );
+        const [onlineMembersInThisGroup, offlineMembersInThisGroup] = [
+            await this.ctx.service.group.getMembersByGroupId(group_id, 1),
+            await this.ctx.service.group.getMembersByGroupId(group_id, 0)
+        ];
         const nsp = this.app.io.of('/');
         nsp.to(this.ctx.socket.id).emit('group_online_members', {
             group_id,
-            list: onlineMembersInThisGroup
+            onlineList: onlineMembersInThisGroup,
+            offlineList: offlineMembersInThisGroup
         });
     }
 }

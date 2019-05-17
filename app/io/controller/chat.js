@@ -4,7 +4,7 @@ const Controller = require('egg').Controller;
 
 class ChatController extends Controller {
     /**
-     * 向客户端的群聊或私聊发消息
+     * 监听客户端消息，向客户端的群聊或私聊发消息
      */
     async sendMsg() {
         const { ctx, app } = this;
@@ -13,11 +13,17 @@ class ChatController extends Controller {
             { type, message, from_user_id, to_group_id, to_user_id }
         ] = ctx.args;
         if (type === 0) {
+            // 写消息表
             const { insertId } = await ctx.service.groupMsg.create({
                 message,
                 from_user_id,
                 to_group_id
             });
+            // 更新这个人在这个群的最近阅读时间
+            await this.service.groupMsg.updateLatestReadTime(
+                to_group_id,
+                from_user_id
+            );
             const user = await ctx.service.user.findOne({
                 id: from_user_id
             });
