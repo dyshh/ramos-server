@@ -33,7 +33,7 @@ module.exports = app => {
                 +size
             ];
             const sql =
-                'SELECT p.id,p.from_user_id,p.to_user_id,p.message,p.created_at,u.avatar,u.name,u.status FROM private_msg as p inner join user as u on p.from_user_id = u.id where (p.from_user_id = ? AND p.to_user_id = ? ) or (p.from_user_id = ? AND p.to_user_id = ? ) order by p.created_at desc limit ?,?';
+                'SELECT p.id,p.from_user_id,p.to_user_id,p.message,p.created_at,u.avatar,u.name AS username,u.status FROM private_msg as p inner join user as u on p.from_user_id = u.id where (p.from_user_id = ? AND p.to_user_id = ? ) or (p.from_user_id = ? AND p.to_user_id = ? ) order by p.created_at desc limit ?,?';
             return await this.app.mysql.query(sql, data);
         }
 

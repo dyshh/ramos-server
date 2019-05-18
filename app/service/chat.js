@@ -10,7 +10,11 @@ module.exports = app => {
             const sql =
                 'SELECT u.id,u.name,u.avatar,u.created_at,u.status FROM user_user_relation AS uu INNER JOIN user AS u ON uu.friend_id = u.id WHERE uu.user_id = ?';
             const originList = await this.app.mysql.query(sql, data);
-            return this.joinMsgInfoToPrivateList(originList, uid);
+            const msgInfoList = await this.joinMsgInfoToPrivateList(
+                originList,
+                uid
+            );
+            return this.joinUnReadCountToPrivateList(msgInfoList);
         }
 
         /**
@@ -85,6 +89,9 @@ module.exports = app => {
                         'SELECT latest_read_time FROM group_user_relation as gu where gu.to_group_id = ? and gu.user_id = ?',
                         [to_group_id, uid]
                     );
+                    if (!ret[0]) {
+                        return item;
+                    }
                     const { latest_read_time } = ret[0];
                     const ret2 = await this.app.mysql.query(
                         'SELECT count(created_at) as unread FROM group_msg as g where UNIX_TIMESTAMP(g.created_at) > UNIX_TIMESTAMP(?) and g.to_group_id = ?',
@@ -125,6 +132,37 @@ module.exports = app => {
                             last_message: message,
                             created_at
                         }
+                    };
+                })
+            );
+        }
+
+        /**
+         * 给私聊列表加上未读消息数
+         * @param {arrat} originList 原始私聊列表
+         */
+        async joinUnReadCountToPrivateList(originList) {
+            const { id: uid } = this.ctx.service.auth.decodeToken();
+            return await Promise.all(
+                originList.map(async item => {
+                    const { id: friend_id } = item;
+                    // 查这个人最后一次点开这个好友的时间
+                    const ret = await this.app.mysql.query(
+                        'SELECT latest_read_time FROM user_user_relation as uu where uu.friend_id = ? and uu.user_id = ?',
+                        [friend_id, uid]
+                    );
+                    if (!ret[0]) {
+                        return item;
+                    }
+                    const { latest_read_time } = ret[0];
+                    const ret2 = await this.app.mysql.query(
+                        'SELECT count(created_at) as unread FROM private_msg as p where UNIX_TIMESTAMP(p.created_at) > UNIX_TIMESTAMP(?) and p.to_user_id = ? and p.from_user_id = ?',
+                        [latest_read_time, friend_id, uid]
+                    );
+                    console.log(ret, ret2, friend_id, uid);
+                    return {
+                        ...item,
+                        ...ret2[0]
                     };
                 })
             );

@@ -43,6 +43,11 @@ class ChatController extends Controller {
                 from_user_id,
                 to_user_id
             });
+            // 更新这个人对这个好友的最近阅读时间
+            await this.service.privateMsg.updateLatestReadTime(
+                to_user_id,
+                from_user_id
+            );
             const fromUser = await ctx.service.user.findOne({
                 id: from_user_id
             });
