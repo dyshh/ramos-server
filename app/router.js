@@ -28,6 +28,8 @@ module.exports = app => {
     router.post('/group', controller.group.create);
     // 主动加群
     router.post('/group_user', controller.groupUser.create);
+    // 获取七牛token
+    router.get('/qiniu/token', controller.qiniu.getToken);
 
     /** ----------------socket------------------- */
     // 发消息
