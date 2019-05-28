@@ -4,7 +4,8 @@ const Controller = require('egg').Controller;
 
 class QiniuController extends Controller {
     async getToken() {
-        this.ctx.body = await this.service.qiniu.getToken();
+        const token = await this.service.qiniu.getToken();
+        this.ctx.body = token;
     }
 }
 

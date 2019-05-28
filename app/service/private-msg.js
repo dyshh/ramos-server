@@ -3,13 +3,15 @@ const moment = require('moment');
 
 module.exports = app => {
     return class PrivateMsgService extends app.Service {
-        async create({ message, from_user_id, to_user_id }) {
+        async create({ message, from_user_id, to_user_id, type, url }) {
             // 假如 我们拿到用户 id 从数据库获取用户详细信息
             return await this.app.mysql.insert('private_msg', {
                 message,
                 from_user_id,
                 to_user_id,
-                created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                type,
+                url
             });
         }
 
@@ -33,7 +35,7 @@ module.exports = app => {
                 +size
             ];
             const sql =
-                'SELECT p.id,p.from_user_id,p.to_user_id,p.message,p.created_at,u.avatar,u.name AS username,u.status FROM private_msg as p inner join user as u on p.from_user_id = u.id where (p.from_user_id = ? AND p.to_user_id = ? ) or (p.from_user_id = ? AND p.to_user_id = ? ) order by p.created_at desc limit ?,?';
+                'SELECT p.id,p.from_user_id,p.to_user_id,p.message,p.url,p.type,p.created_at,u.avatar,u.name AS username,u.status FROM private_msg as p inner join user as u on p.from_user_id = u.id where (p.from_user_id = ? AND p.to_user_id = ? ) or (p.from_user_id = ? AND p.to_user_id = ? ) order by p.created_at desc limit ?,?';
             return await this.app.mysql.query(sql, data);
         }
 

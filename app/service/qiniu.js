@@ -1,6 +1,6 @@
 'use strict';
 const qiniu = require('qiniu');
-const { accessKey, secretKey, bucket } = require('../secret');
+const { accessKey, secretKey, bucket } = require('../secret').qiniu;
 
 module.exports = app => {
     return class QiniuService extends app.Service {

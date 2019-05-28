@@ -10,14 +10,24 @@ class ChatController extends Controller {
         const { ctx, app } = this;
         const nsp = app.io.of('/');
         const [
-            { type, message, from_user_id, to_group_id, to_user_id }
+            {
+                is_private,
+                message,
+                from_user_id,
+                to_group_id,
+                to_user_id,
+                type,
+                url
+            }
         ] = ctx.args;
-        if (type === 0) {
+        if (is_private === 0) {
             // 写消息表
             const { insertId } = await ctx.service.groupMsg.create({
                 message,
                 from_user_id,
-                to_group_id
+                to_group_id,
+                type,
+                url
             });
             // 更新这个人在这个群的最近阅读时间
             await this.service.groupMsg.updateLatestReadTime(
@@ -28,20 +38,24 @@ class ChatController extends Controller {
                 id: from_user_id
             });
             nsp.to(to_group_id).emit('message', {
-                type: 0,
+                is_private: 0,
                 id: insertId,
                 message,
                 from_user_id,
                 to_group_id,
                 avatar: user.avatar,
                 username: user.name,
-                created_at: new Date()
+                created_at: new Date(),
+                type,
+                url
             });
         } else {
             const { insertId } = await ctx.service.privateMsg.create({
                 message,
                 from_user_id,
-                to_user_id
+                to_user_id,
+                type,
+                url
             });
             // 更新这个人对这个好友的最近阅读时间
             await this.service.privateMsg.updateLatestReadTime(
@@ -55,14 +69,16 @@ class ChatController extends Controller {
                 id: to_user_id
             });
             const data = {
-                type: 1,
+                is_private: 1,
                 id: insertId,
                 message,
                 from_user_id,
                 to_user_id,
                 avatar: fromUser.avatar,
                 username: fromUser.name,
-                created_at: new Date()
+                created_at: new Date(),
+                type,
+                url
             };
             // 自己也要发
             nsp.to(fromUser.socket_id).emit('message', data);

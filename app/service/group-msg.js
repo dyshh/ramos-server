@@ -3,13 +3,15 @@ const moment = require('moment');
 
 module.exports = app => {
     return class GroupMsgService extends app.Service {
-        async create({ message, from_user_id, to_group_id }) {
+        async create({ message, from_user_id, to_group_id, type, url }) {
             // 假如 我们拿到用户 id 从数据库获取用户详细信息
             return await this.app.mysql.insert('group_msg', {
                 message,
                 from_user_id,
                 to_group_id,
-                created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                type,
+                url
             });
         }
 
@@ -21,7 +23,7 @@ module.exports = app => {
             const offset = size * (page - 1);
             const data = [groupId, offset, +size];
             const sql =
-                'SELECT g.id,g.from_user_id,g.to_group_id,g.message,g.created_at,u.avatar,u.name AS username,u.status FROM group_msg AS g JOIN user AS u ON g.from_user_id = u.id WHERE (g.to_group_id = ?) ORDER BY g.created_at DESC LIMIT ?,?';
+                'SELECT g.id,g.from_user_id,g.to_group_id,g.message,g.url,g.type,g.created_at,u.avatar,u.name AS username,u.status FROM group_msg AS g JOIN user AS u ON g.from_user_id = u.id WHERE (g.to_group_id = ?) ORDER BY g.created_at DESC LIMIT ?,?';
             return await this.app.mysql.query(sql, data);
         }
 
