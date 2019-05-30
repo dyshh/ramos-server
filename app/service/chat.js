@@ -1,4 +1,5 @@
 'use strict';
+const { getMessageByType } = require('../utils/message-type');
 module.exports = app => {
     return class ChatService extends app.Service {
         /**
@@ -59,7 +60,7 @@ module.exports = app => {
                         // 新建的群或没消息的群
                         return item;
                     }
-                    const { message, from_user_id, created_at } = ret[0];
+                    const { message, from_user_id, created_at, type } = ret[0];
                     const { name } = await this.ctx.service.user.findOne({
                         id: from_user_id
                     });
@@ -68,7 +69,7 @@ module.exports = app => {
                         lastest_message_info: {
                             from_user_id,
                             from_user_name: name,
-                            last_message: message,
+                            last_message: getMessageByType(type, message),
                             created_at
                         }
                     };
@@ -125,11 +126,11 @@ module.exports = app => {
                     if (!ret[0]) {
                         return item;
                     }
-                    const { message, created_at } = ret[0];
+                    const { message, created_at, type } = ret[0];
                     return {
                         ...item,
                         lastest_message_info: {
-                            last_message: message,
+                            last_message: getMessageByType(type, message),
                             created_at
                         }
                     };
