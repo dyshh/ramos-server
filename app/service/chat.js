@@ -160,7 +160,6 @@ module.exports = app => {
                         'SELECT count(created_at) as unread FROM private_msg as p where UNIX_TIMESTAMP(p.created_at) > UNIX_TIMESTAMP(?) and p.to_user_id = ? and p.from_user_id = ?',
                         [latest_read_time, friend_id, uid]
                     );
-                    console.log(ret, ret2, friend_id, uid);
                     return {
                         ...item,
                         ...ret2[0]

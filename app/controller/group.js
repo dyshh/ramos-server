@@ -24,7 +24,6 @@ class GroupController extends Controller {
             'INSERT INTO group_info (to_group_id,name,creator_id,created_at) VALUES (?,?,?,?)',
             [to_group_id, name, creator_id, created_at]
         );
-        console.log(to_group_id, creator_id, created_at);
         // 把建群人加进群
         const ret = await this.app.mysql.query(
             'INSERT INTO group_user_relation (to_group_id,user_id,created_at) VALUES (?,?,?)',
