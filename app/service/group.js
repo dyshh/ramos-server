@@ -47,12 +47,20 @@ module.exports = app => {
             for (const item of groupList) {
                 const { to_group_id } = item;
                 // 给该用户所在群组发group_online_members
-                const onlineMembersInThisGroup = await this.getMembersByGroupId(
-                    to_group_id
-                );
+                const [onlineMembersInThisGroup, offlineMembersInThisGroup] = [
+                    await this.ctx.service.group.getMembersByGroupId(
+                        to_group_id,
+                        1
+                    ),
+                    await this.ctx.service.group.getMembersByGroupId(
+                        to_group_id,
+                        0
+                    )
+                ];
                 nsp.to(to_group_id).emit('group_online_members', {
                     group_id: to_group_id,
-                    list: onlineMembersInThisGroup
+                    onlineList: onlineMembersInThisGroup,
+                    offlineList: offlineMembersInThisGroup
                 });
             }
         }
