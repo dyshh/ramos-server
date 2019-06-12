@@ -18,6 +18,15 @@ module.exports = appInfo => {
 
     // add your middleware config here
     config.middleware = [];
+    config.view = {
+        defaultViewEngine: 'static',
+        mapping: {
+            '.html': 'static'
+        }
+    };
+    config.static = {
+        prefix: '/'
+    };
 
     // add your user config here
     const userConfig = {

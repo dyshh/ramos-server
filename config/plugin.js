@@ -13,5 +13,9 @@ module.exports = {
     jwt: {
         enable: true,
         package: 'egg-jwt'
+    },
+    viewStatic: {
+        enable: true,
+        package: 'egg-view-static'
     }
 };

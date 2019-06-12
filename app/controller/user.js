@@ -90,11 +90,11 @@ class UserController extends Controller {
             // 更新用户表
             await ctx.service.user.update({
                 id: user_id,
-                avatar: `public/avatar/${basename}`
+                avatar: `avatar/${basename}`
             });
             this.ctx.body = {
                 data: {
-                    avatar: `public/avatar/${basename}`
+                    avatar: `avatar/${basename}`
                 }
             };
         } finally {
