@@ -42,10 +42,17 @@ class UserController extends Controller {
         const { insertId } = await this.ctx.service.user.create(params);
         const token = generateToken(insertId);
         // 加到默认群组
-        await this.ctx.service.group.groupAddUser({
-            to_group_id: 1,
-            user_id: insertId
+        const groupList = this.app.mysql.select('group_info', {
+            where: {
+                id: 1
+            }
         });
+        if (groupList[0]) {
+            await this.ctx.service.group.groupAddUser({
+                to_group_id: groupList[0].to_group_id,
+                user_id: insertId
+            });
+        }
 
         this.ctx.body = {
             data: {

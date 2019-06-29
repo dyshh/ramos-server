@@ -9,7 +9,7 @@ module.exports = function connection() {
         // 验证token
         try {
             // 没登录也要把默认群加到socket里，这样没登录才收的到消息
-            ctx.socket.join('cb437f5a-7557-11e9-8f9e-2a86e4085a59'); // 默认群id
+            ctx.socket.join('3bbf93f0-9a46-11e9-9263-0566a71c4cc1'); // 默认群id
             const { id } = jwt.verify(token, secret);
             // 更新用户socket信息
             await ctx.service.user.update({

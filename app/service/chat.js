@@ -37,7 +37,7 @@ module.exports = app => {
         async getDefaultGroup() {
             const originList = await this.app.mysql.select('group_info', {
                 where: {
-                    to_group_id: 'cb437f5a-7557-11e9-8f9e-2a86e4085a59'
+                    id: 1
                 }
             });
             return await this.joinMsgInfoToGroupList(originList);
