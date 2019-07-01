@@ -90,7 +90,7 @@ class UserController extends Controller {
             });
             // 删现在的头像
             if (avatar) {
-                await fs.unlink(path.resolve('app', avatar));
+                await fs.unlink(path.resolve('app/public', avatar));
             }
             // 复制到public目录下
             await fs.copyFile(file.filepath, destUrl);
