@@ -2,6 +2,8 @@
 
 'use strict';
 const { secret } = require('../app/utils/token');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -26,6 +28,11 @@ module.exports = appInfo => {
     };
     config.static = {
         prefix: '/'
+    };
+    config.siteFile = {
+        '/favicon.ico': fs.readFileSync(
+            path.join(__dirname, '../app/public/favicon.ico')
+        )
     };
 
     // add your user config here
