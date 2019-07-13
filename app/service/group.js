@@ -2,13 +2,23 @@
 module.exports = app => {
     return class GroupService extends app.Service {
         /**
+         * 获取默认群：群表第一个群为默认群
+         */
+        async getDefaultGroup() {
+            return await this.app.mysql.select('group_info', {
+                limit: 1
+            });
+        }
+
+        /**
          * 加群
          * @param {object} param0 群id、用户id
          */
         async groupAddUser({ to_group_id, user_id }) {
             return await this.app.mysql.insert('group_user_relation', {
                 to_group_id,
-                user_id
+                user_id,
+                created_at: new Date()
             });
         }
 

@@ -32,18 +32,6 @@ module.exports = app => {
         }
 
         /**
-         * 没登录的默认群
-         */
-        async getDefaultGroup() {
-            const originList = await this.app.mysql.select('group_info', {
-                where: {
-                    id: 1
-                }
-            });
-            return await this.joinMsgInfoToGroupList(originList);
-        }
-
-        /**
          * 给群列表加上最新消息
          * @param {array} originList 原始群列表
          */

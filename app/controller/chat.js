@@ -5,11 +5,17 @@ const moment = require('moment');
 const { isEmpty } = require('lodash');
 
 class ChatController extends Controller {
+    /**
+     * 没登录的默认群
+     */
     async getDefaultGroup() {
-        const defaultGroup = await this.ctx.service.chat.getDefaultGroup();
+        const defaultGroup = await this.ctx.service.group.getDefaultGroup();
+        const defaultGroupWithMsg = await this.ctx.service.chat.joinMsgInfoToGroupList(
+            defaultGroup
+        );
         return {
             data: {
-                groups: defaultGroup
+                groups: defaultGroupWithMsg
             }
         };
     }
