@@ -26,7 +26,9 @@ class GroupUserController extends Controller {
             'SELECT * FROM group_user_relation AS g WHERE g.user_id = ? AND to_group_id = ?',
             [user_id, to_group_id]
         );
-        assert(isEmpty(isExist), '你已经在这个群里了哦');
+        if (!isEmpty(isExist)) {
+            this.ctx.throw(400, '你已经在这个群里了哦');
+        }
         // 加群
         const ret = await this.app.mysql.query(
             'INSERT INTO group_user_relation (to_group_id,user_id,created_at) VALUES (?,?,?)',
