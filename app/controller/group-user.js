@@ -2,7 +2,6 @@
 
 const Controller = require('egg').Controller;
 const { isEmpty } = require('lodash');
-const assert = require('assert');
 
 class GroupUserController extends Controller {
     /**
@@ -17,7 +16,9 @@ class GroupUserController extends Controller {
                 'SELECT * FROM group_info AS g WHERE g.name = ?',
                 [group_name]
             );
-            assert(!isEmpty(group), '群组不存在');
+            if (isEmpty(group)) {
+                this.ctx.throw(400, '群组不存在');
+            }
             if (group) {
                 to_group_id = group[0].to_group_id;
             }

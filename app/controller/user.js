@@ -1,7 +1,6 @@
 'use strict';
 
 const Controller = require('egg').Controller;
-const assert = require('assert');
 const { generateToken } = require('../utils/token');
 const bcrypt = require('bcrypt');
 const fs = require('mz/fs');
@@ -12,9 +11,13 @@ class UserController extends Controller {
     async login() {
         const { name, password } = this.ctx.request.body;
         const user = await this.ctx.service.user.findOne({ name });
-        assert(user, '用户名不存在');
+        if (!user) {
+            this.ctx.throw(400, '用户名不存在');
+        }
         const isPasswordCorrect = bcrypt.compareSync(password, user.password);
-        assert(isPasswordCorrect, '密码错误');
+        if (!isPasswordCorrect) {
+            this.ctx.throw(400, '密码错误');
+        }
         const token = generateToken(user.id);
         this.ctx.body = {
             data: {
@@ -31,7 +34,9 @@ class UserController extends Controller {
     async register() {
         const { name, password } = this.ctx.request.body;
         const user = await this.ctx.service.user.findOne({ name });
-        assert(!user, '用户名已经被注册');
+        if (user) {
+            this.ctx.throw(400, '用户名已经被注册');
+        }
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         // 随机分配头像
@@ -119,8 +124,9 @@ class UserController extends Controller {
                 id: uid
             });
             const isCorrect = await bcrypt.compare(oldpsw, password);
-            assert(isCorrect, '旧密码错误');
-
+            if (!isCorrect) {
+                this.ctx.throw(400, '旧密码错误');
+            }
             const salt = await bcrypt.genSalt(10);
             hash = await bcrypt.hash(newpsw, salt);
         }

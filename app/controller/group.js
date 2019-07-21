@@ -2,7 +2,6 @@
 
 const Controller = require('egg').Controller;
 const { isEmpty } = require('lodash');
-const assert = require('assert');
 const uuid = require('uuid/v1');
 
 class GroupController extends Controller {
@@ -15,7 +14,9 @@ class GroupController extends Controller {
             'SELECT * FROM group_info AS g WHERE g.name = ?',
             [name]
         );
-        assert(isEmpty(isExist), `群名【${name}】已经被使用了哦，换一个吧`);
+        if (!isEmpty(isExist)) {
+            this.ctx.throw(400, `群名【${name}】已经被使用了哦，换一个吧`);
+        }
         const to_group_id = uuid();
         const { id: creator_id } = this.ctx.service.auth.decodeToken();
         const created_at = new Date();
