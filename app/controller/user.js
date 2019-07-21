@@ -6,6 +6,7 @@ const { generateToken } = require('../utils/token');
 const bcrypt = require('bcrypt');
 const fs = require('mz/fs');
 const path = require('path');
+const { pick } = require('lodash');
 
 class UserController extends Controller {
     async login() {
@@ -33,10 +34,13 @@ class UserController extends Controller {
         assert(!user, '用户名已经被注册');
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
+        // 随机分配头像
+        const avatar = await this.ctx.service.user.giveRandomAvatar();
         const params = {
             name,
             password: hash,
             salt,
+            avatar,
             created_at: new Date()
         };
         const { insertId } = await this.ctx.service.user.create(params);
@@ -55,7 +59,8 @@ class UserController extends Controller {
                 token,
                 userInfo: {
                     id: insertId,
-                    username: name
+                    username: name,
+                    avatar
                 }
             },
             message: '注册成功'
@@ -107,7 +112,7 @@ class UserController extends Controller {
     }
     async updateUserInfo() {
         const { uid } = this.ctx.params;
-        const { username, oldpsw, newpsw } = this.ctx.request.body;
+        const { username, oldpsw, newpsw, avatar } = this.ctx.request.body;
         let hash;
         if (oldpsw) {
             const { password } = await this.ctx.service.user.findOne({
@@ -122,11 +127,15 @@ class UserController extends Controller {
         await this.ctx.service.user.update({
             id: uid,
             name: username,
-            password: hash
+            password: hash,
+            avatar
+        });
+        const userInfo = await this.ctx.service.user.findOne({
+            id: uid
         });
 
         this.ctx.body = {
-            success: true
+            data: pick(userInfo, ['id', 'avatar', 'name'])
         };
     }
 }

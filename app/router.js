@@ -17,8 +17,6 @@ module.exports = app => {
     router.get('/chat_list', controller.chat.getChatList);
     // 获取聊天记录历史
     router.get('/message/:id', controller.messages.getHistoryList);
-    // 上传头像
-    router.post('/upload_avatar', controller.user.uploadAvatar);
     // 修改用户信息，用户名和密码
     router.patch('/user/:uid', controller.user.updateUserInfo);
     // 搜索群组和用户

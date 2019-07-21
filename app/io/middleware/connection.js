@@ -16,7 +16,6 @@ module.exports = function connection() {
             const { to_group_id } = defaultGroup[0];
             ctx.socket.join(to_group_id); // 默认群id
             const { id } = jwt.verify(token, secret);
-            console.log(id);
             // 更新用户socket信息
             await ctx.service.user.update({
                 id,
@@ -29,9 +28,13 @@ module.exports = function connection() {
                 ctx.socket.join(item.to_group_id);
             }
             // 查用户信息
-            const { name, avatar } = await ctx.service.user.findOne({
+            const user = await ctx.service.user.findOne({
                 id
             });
+            if (!user) {
+                return;
+            }
+            const { name, avatar } = user;
             // 返回通过登录验证消息
             socket.emit('auth', {
                 login: true,
