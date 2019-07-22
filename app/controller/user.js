@@ -40,7 +40,7 @@ class UserController extends Controller {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         // 随机分配头像
-        const avatar = await this.ctx.service.user.giveRandomAvatar();
+        const avatar = await this.ctx.service.avatar.giveRandomAvatar(1);
         const params = {
             name,
             password: hash,

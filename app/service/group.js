@@ -74,5 +74,23 @@ module.exports = app => {
                 });
             }
         }
+
+        async update(gid, params) {
+            return await this.app.mysql.update('group_info', params, {
+                where: {
+                    to_group_id: gid
+                }
+            });
+        }
+
+        async findOne(gid, columns) {
+            return await this.app.mysql.get(
+                'group_info',
+                { to_group_id: gid },
+                {
+                    columns
+                }
+            );
+        }
     };
 };

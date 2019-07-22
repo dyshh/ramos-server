@@ -20,12 +20,14 @@ module.exports = appInfo => {
 
     // add your middleware config here
     config.middleware = [];
+    // 支持controller/home.js的写法，访问7001端口直接render public下的index.html
     config.view = {
         defaultViewEngine: 'static',
         mapping: {
             '.html': 'static'
         }
     };
+    // egg-static配置
     config.static = {
         prefix: '/'
     };

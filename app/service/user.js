@@ -1,5 +1,5 @@
 'use strict';
-const { omit, sample } = require('lodash');
+const { omit } = require('lodash');
 
 module.exports = app => {
     return class UserService extends app.Service {
@@ -22,30 +22,6 @@ module.exports = app => {
         }
         async select(params) {
             return await this.app.mysql.select('user', { ...params });
-        }
-
-        /**
-         * 随机分配头像
-         */
-        async giveRandomAvatar() {
-            const unUsedAvatars = await this.app.mysql.select('avatar', {
-                where: {
-                    is_use: 0
-                }
-            });
-            const { id, address } = sample(unUsedAvatars);
-            await this.app.mysql.update(
-                'avatar',
-                {
-                    is_use: 1
-                },
-                {
-                    where: {
-                        id
-                    }
-                }
-            );
-            return address;
         }
     };
 };
