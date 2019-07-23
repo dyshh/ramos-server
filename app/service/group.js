@@ -76,11 +76,15 @@ module.exports = app => {
         }
 
         async update(gid, params) {
-            return await this.app.mysql.update('group_info', params, {
-                where: {
-                    to_group_id: gid
+            return await this.app.mysql.update(
+                'group_info',
+                JSON.parse(JSON.stringify(params)),
+                {
+                    where: {
+                        to_group_id: gid
+                    }
                 }
-            });
+            );
         }
 
         async findOne(gid, columns) {

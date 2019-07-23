@@ -14,3 +14,4 @@ typings/
 .nyc_output/
 app/public/
 app/secret.js
+config/config.local.js

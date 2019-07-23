@@ -37,8 +37,9 @@ class GroupController extends Controller {
 
     async updateGroupInfo() {
         const { gid } = this.ctx.params;
-        const { avatar } = this.ctx.request.body;
+        const { name, avatar } = this.ctx.request.body;
         await this.ctx.service.group.update(gid, {
+            name,
             avatar
         });
         const data = await this.ctx.service.group.findOne(gid, [
