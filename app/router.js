@@ -25,8 +25,12 @@ module.exports = app => {
     router.post('/user_user', controller.userUser.create);
     // 创建新群
     router.post('/group', controller.group.create);
+    // 退群
+    router.patch('/group/leave', controller.group.leaveGroup);
     // 修改群信息
     router.patch('/group/:gid', controller.group.updateGroupInfo);
+    // 解散群
+    router.delete('/group/:gid', controller.group.deleteGroup);
     // 主动加群
     router.post('/group_user', controller.groupUser.create);
     // 获取七牛token

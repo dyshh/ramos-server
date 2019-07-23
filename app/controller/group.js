@@ -53,6 +53,31 @@ class GroupController extends Controller {
             data
         };
     }
+
+    // 解散群组
+    async deleteGroup() {
+        const { gid } = this.ctx.params;
+        await this.app.mysql.delete('group_info', {
+            to_group_id: gid
+        });
+        await this.ctx.service.groupUserRelation.deleteByGroupId(gid);
+        this.ctx.body = {
+            data: '解散成功'
+        };
+    }
+
+    // 退群
+    async leaveGroup() {
+        const { group_id } = this.ctx.request.body;
+        const { id: member_id } = this.ctx.service.auth.decodeToken();
+        await this.ctx.service.groupUserRelation.leaveGroup(
+            group_id,
+            member_id
+        );
+        this.ctx.body = {
+            data: '退群成功'
+        };
+    }
 }
 
 module.exports = GroupController;
