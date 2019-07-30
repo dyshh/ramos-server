@@ -5,7 +5,7 @@ const { isEmpty } = require('lodash');
 
 class UserUserController extends Controller {
     /**
-     * 主动加群
+     * 主动加好友
      */
     async create() {
         const { friend_id } = this.ctx.request.body;
@@ -27,6 +27,14 @@ class UserUserController extends Controller {
             friend_id: id,
             created_at: new Date()
         });
+        const friendInfo = await this.ctx.service.user.findOne({
+            id: friend_id
+        });
+        if (friendInfo.status === 1) {
+            // 如果对方在线，发送通知刷新好友列表
+            const nsp = this.app.io.of('/');
+            nsp.to(friendInfo.socket_id).emit('refresh_chat_list');
+        }
 
         this.ctx.body = {
             data: {}
