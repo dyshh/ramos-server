@@ -56,16 +56,16 @@ module.exports = appInfo => {
         mysql: {
             // 单数据库信息配置
             client: {
-                // host
-                host: 'localhost',
+                // 跟docker的mysql容器一样
+                host: process.env.MYSQL_HOST || '127.0.0.1',
                 // 端口号
                 port: '3306',
                 // 用户名
-                user: 'root',
+                user: process.env.MYSQL_USER,
                 // 密码
-                password: 'root',
+                password: process.env.MYSQL_ROOT_PASSWORD,
                 // 数据库名
-                database: 'chatroom'
+                database: process.env.MYSQL_DATABASE
             },
             // 是否加载到 app 上，默认开启
             app: true,

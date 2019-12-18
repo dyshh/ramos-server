@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+    node:
+        build: ./
+        env_file:
+            - ./.env
+        ports:
+            - '${WEB_PORT}:${WEB_PORT}'
+        depends_on:
+            - '${MYSQL_HOST}'
+    db:
+        build: ./db/
+        ports:
+            - 3306:3306
+        env_file:
+            - ./.env
