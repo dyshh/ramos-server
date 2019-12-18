@@ -44,6 +44,8 @@ COLLATE utf8_general_ci NOT NULL,
   `creator_id` int
 (11) NOT NULL,
   `created_at` datetime NOT NULL,
+   `avatar` varchar
+(255) DEFAULT NULL,
   PRIMARY KEY
 (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
@@ -166,6 +168,24 @@ CREATE TABLE `user_user_relation`
   PRIMARY KEY
 (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for avatar
+-- ----------------------------
+DROP TABLE IF EXISTS `avatar`;
+CREATE TABLE `avatar`
+(
+  `id` int
+(11) NOT NULL AUTO_INCREMENT,
+  `address` varchar
+(255) DEFAULT NULL,
+  `is_use` tinyint
+(4) DEFAULT NULL,
+  `type` tinyint
+(4) NOT NULL,
+  PRIMARY KEY
+(`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS
 = 1;

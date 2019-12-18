@@ -61,11 +61,11 @@ module.exports = appInfo => {
                 // 端口号
                 port: '3306',
                 // 用户名
-                user: process.env.MYSQL_USER,
+                user: process.env.MYSQL_USER || 'root',
                 // 密码
-                password: process.env.MYSQL_ROOT_PASSWORD,
+                password: process.env.MYSQL_ROOT_PASSWORD || 'root',
                 // 数据库名
-                database: process.env.MYSQL_DATABASE
+                database: process.env.MYSQL_DATABASE || 'chatroom'
             },
             // 是否加载到 app 上，默认开启
             app: true,
