@@ -2,8 +2,6 @@
 
 'use strict';
 const { secret } = require('../app/utils/token');
-const fs = require('fs');
-const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -20,27 +18,16 @@ module.exports = appInfo => {
 
     // add your middleware config here
     config.middleware = [];
-    // 支持controller/home.js的写法，访问7001端口直接render public下的index.html
-    config.view = {
-        defaultViewEngine: 'static',
-        mapping: {
-            '.html': 'static'
-        }
-    };
-    // egg-static配置
-    config.static = {
-        prefix: '/'
-    };
-    config.siteFile = {
-        '/favicon.ico': fs.readFileSync(
-            path.join(__dirname, '../app/public/favicon.ico')
-        )
-    };
 
     // add your user config here
     const userConfig = {
         multipart: {
             mode: 'file'
+        },
+        security: {
+            csrf: {
+                enable: false // 跨域直接关了
+            }
         },
         io: {
             namespace: {
@@ -75,6 +62,9 @@ module.exports = appInfo => {
 
         jwt: {
             secret
+        },
+        cors: {
+            origin: '*'
         }
     };
 

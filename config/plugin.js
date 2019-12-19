@@ -14,8 +14,8 @@ module.exports = {
         enable: true,
         package: 'egg-jwt'
     },
-    viewStatic: {
+    cors: {
         enable: true,
-        package: 'egg-view-static'
+        package: 'egg-cors'
     }
 };

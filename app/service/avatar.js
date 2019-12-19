@@ -14,6 +14,9 @@ module.exports = app => {
                     type
                 }
             });
+            if (!sample(unUsedAvatars)) {
+                return '';
+            }
             const { id, address } = sample(unUsedAvatars);
             await this.app.mysql.update(
                 'avatar',
